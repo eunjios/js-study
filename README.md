@@ -133,14 +133,29 @@ greet2(); // 안녕하세요, 영섭!
 
 ### 2. this를 변경시키려면?
 - bind, call, apply 를 통해 this를 명시적으로 변경할 수 있다.
+- bind, call apply는 Function.prototype 메서드로 모든 함수에서 사용 가능하다.
 
-### 3. call 과 apply는 무엇인가? 어떤 차이가 있는가?
-- 함수를 호출하는 방법은 다음과 같다.
-    1. 함수이름()
-    2. 함수이름.call()
-    3. 함수이름.apply()
-- call과 apply는 함수의 컨텍스트를 변경해야 하거나 유사한 객체들에 대해 동일한 작업을 해야할 때 사용된다.
+### 3. bind, call, apply는 무엇인가? 어떤 차이가 있는가?
+- bind, call, apply는 함수의 this를 명시적으로 바인딩할 때 사용한다.
 
+**`bind` vs `call, apply`**
+> 함수를 호출하는 법  
+> `함수()` `함수.call()` `함수.apply()`
+- bind
+    - 함수가 실행되지 않는다.
+    - 새로운 함수를 만들어 return 하기 때문에  `const 새함수 = 함수.bind(...);` 로 선언 후 실행 `새함수();`
+- call / apply
+    - this를 바인딩 하고 함수를 실행한다.
+
+**`call` vs `apply`**
+- call
+    - 첫번째 파라미터로 this에 해당하는 객체를 넘긴다.
+    - 나머지 파라미터는 함수와 동일하게 컴마(,)를 사용하여 넘긴다.
+- apply 
+    - 첫번째 파라미터로 this에 해당하는 객체를 넘긴다.
+    - 나머지 파라미터는 배열 형태로 넘긴다
+
+**예시**
 ```js
 function greeting(name) {
     console.log(`${this.message}, ${name}!`);
