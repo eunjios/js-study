@@ -332,10 +332,276 @@ const isEvenNumbers = numbers.map((number) => {
 });
 console.log(isEvenNumbers); // [false, true, false, true, false]
 ```
-- [그 외의 다양한 배열 고차함수](https://inpa.tistory.com/entry/JS-%F0%9F%93%9A-%EB%B0%B0%EC%97%B4-%EA%B3%A0%EC%B0%A8%ED%95%A8%EC%88%98-%EC%B4%9D%EC%A0%95%EB%A6%AC-%F0%9F%92%AF-mapfilterfindreducesortsomeevery)
 
 ## 📌 함수형 프로그래밍
+### 1. 배열의 고차함수 중 어떤 것을 사용하는지?
+- map: JSON 데이터 받아올 때 자주 사용
+    ```js
+    const qnas = [
+        {
+            id: 1,
+            question: '첫 번째 질문',
+            answer: '첫 번째 답'
+        }, 
+        {
+            id: 2,
+            question: '두 번째 질문',
+            answer: '두 번째 답'
+        }
+    ];
+    
+    const chatDetail = qnas(qna => ({
+        id: qna.id,
+        question: qna.question,
+        answer: qna.answer,
+    }));
+    ```
+- forEach: 배열 값을 순회해야 할 때 사용
+- reduce: 반복되는 연산을 처리할 때 사용 
+- [그 외의 다양한 배열 고차함수](https://inpa.tistory.com/entry/JS-%F0%9F%93%9A-%EB%B0%B0%EC%97%B4-%EA%B3%A0%EC%B0%A8%ED%95%A8%EC%88%98-%EC%B4%9D%EC%A0%95%EB%A6%AC-%F0%9F%92%AF-mapfilterfindreducesortsomeevery)
+
+### 2. reduce가 어떻게 동작하는가? reduce를 직접 구현해봐라
+- reduce 는 현재 상태 (누적된 이전 상태와 현재 배열 요소 값)와 함수를 받아 새 상태를 리턴하도록 동작한다.
+- reduce 문법
+```js
+array.reduce((누적값, 현재배열요소값, *현재배열인덱스값, *배열) => {
+    // 연산
+}, 누적값의 초기값);
+```
+- reduce 직접 구현해보기
+```js
+function reduce(array, callbackFunc, initialValue) {
+    // 초기화
+    let accumultor = initialValue !== undefined ? initialValue : array[0];
+    const startIndex = initialValue !== undefined ? 0 : 1;
+
+
+    for (let i = startIndex; i < array.length; i++) {
+        accumulator = callbackFunc(accumulator, array[i], i, array);
+    }
+    return accumulator;
+}
+```
+
+### 3. 함수 합성에는 어떤 방법들이 있는가?
+
+- 함수 합성 (function composition) 이란, 기존 함수들을 조합하여 새로운 함수를 만드는 것이다. 
+- 함수를 합성하는 방법은 (1) 메서드 체이닝 (2) 고차함수 가 있다.
+
+**간단히 함수 합성**
+```js
+function addOne(num) {
+    return num + 1;
+}
+function square(num) {
+    return num * num;
+}
+
+console.log(square(addOne(2))); // 9
+```
+
+**고차함수를 이용한 함수 합성**
+```js
+function addOne(num) {
+    return num + 1;
+}
+function square(num) {
+    return num * num;
+}
+// addOne과 square를 합성하는 함수
+function compose(square, addOne) {
+    return function (num) {
+        return square(addOne(num));
+    }
+}
+const composedFunc = compose(square, addOne);
+console.log(composedFunc(2)); // 9
+```
+
+**reduce 메서드를 사용한 함수 합성 (1)**
+> compose(함수1, 함수2, 함수3)(x) 일 때 함수3부터 실행됨
+```js
+const compose = (func1, func2) => val => func2(func1(val));
+const compute = compose(addOne, square); // square(addOne(val))
+console.log(compute(2)); // 9
+```
+```js
+// function 개수가 정해져 있지 않을 때 
+function compose(...funcs) {
+    return function (initialVal) {
+        return funcs.reduceRight((val, func) => func(val), initialVal);
+    }
+}
+// 위와 동일
+const compose = (...funcs) => (initialVal) => funcs.reduceRight((val, func) => func(val), initialVal);
+
+// compose 호출 예시
+compose(square, square, addOne)(2); // 81
+square(square(addOne(2))); // 81
+```
+
+**reduce 메서드를 이용한 함수 합성 (2)**
+> pipe(함수1, 함수2, 함수3)(x) 일 때 함수1부터 실행됨 
+```js
+function pipe(...funcs) {
+    return function (initialVal) {
+        return funcs.reduce((val, func) => func(val), initialVal);
+    }
+}
+
+compose(square, square, addOne)(2); // 17
+addOne(addOne(square(2))); // 17
+```
+
+### 4. 합성은 상속과 비교했을 때 어떤 장점이 있는가?
+> 참고자료: [상속을 자제하고 합성을 이용하자](https://inpa.tistory.com/entry/OOP-%F0%9F%92%A0-%EA%B0%9D%EC%B2%B4-%EC%A7%80%ED%96%A5%EC%9D%98-%EC%83%81%EC%86%8D-%EB%AC%B8%EC%A0%9C%EC%A0%90%EA%B3%BC-%ED%95%A9%EC%84%B1Composition-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0#%EC%83%81%EC%86%8D%EC%9D%98_%EB%8B%A4%EC%82%AC%EB%8B%A4%EB%82%9C%ED%95%9C_%EB%AC%B8%EC%A0%9C%EC%A0%90)
+
+- 합성과 상속은 중복되는 코드를 재사용하는 기법으로 사용된다. 그러나 상속은 객체 간의 결합도가 높아지기 때문에 지양하는 것이 좋고, 합성을 통해 코드를 재사용 하는 것이 좋다. 자세한 내용은 다음과 같다.
+
+
+**상속을 지양해야 하는 이유**
+- 상속은 결합도가 높아진다. 부모 클래스의 변경이 자식 클래스에 영향을 미치고, 자식 클래스의 변경이 부모 클래스나 다른 자식 클래스에 영향을 줄 수 있기 때문에 코드 유지보수가 어려워질 수 있다.
+- 부모 클래스의 기능을 확장하려면 자식 클래스에서 부모 클래스의 메서드를 오버라이드 해야 한다.
+
+
+**합성을 지향해야 하는 이유**
+- 합성은 결합도가 낮다. 각 객체는 독립적으로 존재하며, 변경이 발생해도 다른 객체에 영향을 주지 않는다.
+- 합성은 각 객체를 작고 의미있는 기능 단위로 분리할 수 있기 때문에 각 객체의 재사용성이 높아진다. 따라서 유지보수성과 확장성이 향상된다.
+
+
+**리액트에서 합성은 어떻게 쓰일까?**
+- 함수형 컴포넌트 사용 
+```js
+// component composition
+function Container({ children }) {
+    return (
+        <div>
+            {children}
+        </div>
+    );
+}
+
+function Block() {
+    return (
+        <Container>
+            <h2>title</h2>
+            <p>text</p>
+        </Continer>
+    )
+}
+```
+```js
+function AlertMessage({ type, message }) {
+    return (
+        <div className={`modal ${type}`}>
+            {message}
+        </div>
+    );
+}
+
+function App() {
+    return (
+        <div>
+            <Modal type="info" message="정보 메시지" />
+            <Modal type="warning" message="경고 메시지" />
+            <Modal type="error" message="에러 메시지" />
+        </div>
+    )
+}
+```
+
+### 5. 불변성(immutability)란 무엇인가?
+- 불변성은 데이터의 변경이 불가함을 의미한다. 데이터가 한 번 생성되고 설정된 후에는 수정되지 않는다. 메모리영역 안에서 변경이 불가능하고 변수에 할당할 때 완전히 새로운 값이 만들어져 재할당된다.
+- 불변성을 지켜줘야지만 리액트 컴포넌트에서 상태가 업데이트 됐음을 감지할 수 있고 이에 따라 필요한 리렌더링이 진행된다. 또한 컴포넌트 업데이트 성능 최적화를 제대로 할 수 있다.
+
+**리액트에서 불변성을 지켜야 하는 이유**
+> 참고자료: [React의 불변성](https://velog.io/@badahertz52/%EC%B0%B8%EC%A1%B0%ED%83%80%EC%9E%85%EA%B3%BC-React%EC%9D%98-%EB%B6%88%EB%B3%80%EC%84%B1)
+- 리액트의 state 변화 감지 기준은 콜 스택의 주소값이기 때문이다. (얕은 비교)
+- 주소를 비교하기 때문에 리액트의 state를 빠르게 감지할 수 있는 것이다.
+- 참고로 React는 불변성에 기반하여 상태 관리를 하고, Vue는 상태가 변하는 것을 허용한다. ([참고](https://itchallenger.tistory.com/732))
+
+**타입에 따른 불변성**
+- immutable type (원시 타입)
+    - Boolean
+    - String
+    - Number
+    - Null
+    - undefined
+    - Symbol
+- mutable type (참조 타입)
+    - Object
+    - Array
+
+```js
+// immutable
+let a = 1;
+let b = a;
+b = 2;
+
+console.log(a); // 1
+console.log(b); // 2
+```
+```js
+// mutable
+let c = {name: 'c'};
+let d = c;
+d.name = 'd';
+
+console.log(c); // 'd'
+console.log(d); // 'd'
+```
+**배열의 불변성을 지키려면?**
+```js
+// mutable example
+let x = [1, 2];
+let y = x;
+
+x.push(3);
+
+console.log(x); // [1, 2, 3]
+console.log(y); // [1, 2, 3]
+```
+```js
+// (1) spread 연산자 사용
+let x = [1, 2];
+let y = [...x]; // 새로운 배열 생성하여 x 값 복사
+
+x.push(3);
+
+console.log(x); // [1, 2, 3]
+console.log(y); // [1, 2]
+```
+```js
+// (2) concat 사용
+let x = [1, 2];
+let y = x.concat(); // 새로운 배열 생성하여 x 값 복사 
+
+x.push(3);
+
+console.log(x); // [1, 2, 3]
+console.log(y); // [1, 2]
+```
+
+### 6. Immutable의 단점이 있는가?
+- 메모리가 증가한다. 불변성을 유지하는 대신 새로운 데이터를 생성해야 하기 때문에 메모리 사용량이 증가한다.
+- 특히 대규모 데이터를 다루는 경우에는 성능 문제를 고려해야 한다. 
+- *🤔 redux 사용 이유? 이건 나중에 공부하자*
+
 ## 📌 객체 지향 프로그래밍
+### 1. ES Classes 상속 경험 있는가?
+- 없다. 함수형 컴포넌트만 사용해봤다.
+
+### 2. 객체를 나누는 단위는 무엇인가?
+- 기능 단위로 객체를 나눈다. 리액트에서는 컴포넌트가 객체가 된다.
+- 각각의 컴포넌트는 자신의 state와 props를 가질 수 있다. state와 props를 이용하면 컴포넌트 간에 데이터를 전달하고 기능을 조합할 수 있다.
+
+### 3. 애플리케이션 의존성을 낮추는 방법
+- 컴포넌트를 독립적인 기능 단위로 나눈다. 그리고 컴포넌트 간의 의존성을 줄인다.
+- 상태 관리 라이브러리 (Redux) 를 사용하여 상태를 중앙에서 관리한다. 이를 통해 컴포넌트 간의 데이터 전달을 줄이고 각 컴포넌트 간의 의존성을 줄일 수 있다.
+- 공통 로직은 utils 또는 커스텀 훅으로 분리하여 의존성을 낮춘다.
+- UI를 표시하는 컴포넌트와 데이터를 관리하고 로직을 처리하는 컴포넌트를 구분한다. 이로 UI와 로직 간의 의존성을 낮출 수 있다. 
+- React.memo와 같은 메모이제이션 기술을 사용하여 렌더링 최적화를 한다. 상위 컴포넌트의 렌더링이 발생하더라도 하위 컴포넌트들이 불필요하게 재렌더링 되지 않도록 하면 컴포넌트 간의 결합도를 낮출 수 있고 성능도 향상된다.
+
 ## 📌 비동기
 ## 📌 객체
 ## 📌 디버깅
