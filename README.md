@@ -17,7 +17,15 @@
     - [3. 커링이란?](#3-커링이란)
     - [4. 고차함수란?](#4-고차함수란)
 - [FP](#📌-함수형-프로그래밍)
+    - [1. 배열의 고차함수 중 어떤 것을 사용?](#1-배열의-고차함수-중-어떤-것을-사용하는지)
+    - [2. reduce의 동작 원리와 구현 방법](#2-reduce가-어떻게-동작하는가-reduce를-직접-구현해봐라)
+    - [3. 함수 합성에는 어떤 방법들이 있는가](#3-함수-합성에는-어떤-방법들이-있는가)
+    - [4. 합성은 상속과 비교했을 때 어떤 장점이 있는가?](#4-합성은-상속과-비교했을-때-어떤-장점이-있는가)
+    - [5. 불변성이란 무엇인가?](#5-불변성immutability란-무엇인가)
 - [OOP](#📌-객체-지향-프로그래밍)
+    - [1. ES Classes 상속 경험 있는가?](#1-es-classes-상속-경험-있는가)
+    - [2. 객체를 나누는 단위는 무엇인가?](#2-객체를-나누는-단위는-무엇인가)
+    - [3. 애플리케이션 의존성을 낮추는 방법](#3-애플리케이션-의존성을-낮추는-방법)
 - [비동기](#📌-비동기)
 - [객체](#📌-객체)
 - [기타](#📌-기타)
@@ -493,7 +501,7 @@ function Block() {
 ```js
 function AlertMessage({ type, message }) {
     return (
-        <div className={`modal ${type}`}>
+        <div className={`alert ${type}`}>
             {message}
         </div>
     );
@@ -502,9 +510,9 @@ function AlertMessage({ type, message }) {
 function App() {
     return (
         <div>
-            <Modal type="info" message="정보 메시지" />
-            <Modal type="warning" message="경고 메시지" />
-            <Modal type="error" message="에러 메시지" />
+            <AlertMessage type="info" message="정보 메시지" />
+            <AlertMessage type="warning" message="경고 메시지" />
+            <AlertMessage type="error" message="에러 메시지" />
         </div>
     )
 }
