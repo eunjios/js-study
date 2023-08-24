@@ -703,6 +703,65 @@ delayLog();
 ### 5. Micro task queue란?
 - 참고 자료: [Task Queue말고 다른 큐가 더 있다고? (MicroTask Queue, Animation Frames)](https://velog.io/@titu/JavaScript-Task-Queue%EB%A7%90%EA%B3%A0-%EB%8B%A4%EB%A5%B8-%ED%81%90%EA%B0%80-%EB%8D%94-%EC%9E%88%EB%8B%A4%EA%B3%A0-MicroTask-Queue-Animation-Frames-Render-Queue)
 ## 📌 객체
+### 1. 객체 표현 방식 중 자주 사용하는 것은?
+- 리터럴 표기법을 가장 많이 사용한다.
+```js
+const cat = {
+    name: '고양이',
+    sound: '야옹'
+}
+```
+**그 외에 객체 표현 방식**
+- 함수 생성자
+```js
+function Cat(name, age) {
+    this.name = name;
+    this.sound = sound;
+}
+
+const cat = new Cat('고양이', '야옹');
+```
+- 객체 생성자: 빈 객체를 생성할 때 사용
+```js
+const cat = new Object();
+cat.name = '고양이';
+cat.sound = '야옹';
+```
+- Object.create(): 프로토타입을 상속받아 객체 생성
+```js
+const prototype = {
+    say: function() {
+        return this.sound;
+    }
+};
+const cat = Object.create(prototype);
+cat.name = '고양이';
+cat.sound = '야옹';
+```
+
+### 2. class, prototype, literal 차이는?
+- class
+    - `class` 키워드를 사용하여 객체를 생성한다.
+    - 클래스 내부에서 프로퍼티와 메서드를 정의한다.
+    - prototype 기반 상속을 사용하지만 prototype을 사용하는 것보다 문법이 간단하다.
+    - 상속이 가능하다 (`extends`)
+- prototype
+    - `new` 키워드를 사용하여 객체를 생성한다.
+    - 다른 객체의 prototype을 기반으로 생성된다.
+        - `Object.prototype.메서드이름`
+    - 생성자 함수의 prototype에 프로퍼티와 메서드를 추가할 수 있다.
+    - 모든 인스턴스가 공통된 prototype을 공유한다. 따라서 메모리 측면에서 효율적이다.
+- literal
+    - 중괄호 `{}`를 사용하여 객체를 생성한다.
+    - 생성 시점에 프로퍼티와 메서드를 정의할 수 있다.
+    - 상속 구조를 사용하지 않는다. 따라서 prototype chain이 더 짧다.
+### 3. 자주 사용하는 메서드는?
+- 객체를 많이 다루지 않아 자주 사용하는 메서드는 없지만, 알고리즘 문제를 풀 때 `keys()` 나 `values()` 를 사용해 본 경험이 있다.
+### 4. JSON 파싱 시 가장 신경 쓰는 것은?
+- JSON.parse() 메서드는 문자열 형식의 JSON 데이터를 자바스크립트 객체로 변환한다.
+- JSON 형식을 잘 확인해야 한다. 모든 키가 큰 따옴표로 묶였는지 확인해야 하고, 배열과 객체는 올바른 괄호로 묶여 있어야 한다. 올바르지 않은 형식의 경우를 고려하여 try-catch 문으로 예외 처리를 해야 한다.
+- 시간, 날짜 및 사용자 정의 형식은 자동으로 변환할 수 없다. 따라서 이러한 타입은 추가적으로 처리해야 한다.
+- 참고 자료: [자바스크립트 문자열을 JSON으로 변환 (JSON.parse)](https://sisiblog.tistory.com/398)
 ## 📌 디버깅
 ## 📌 기타
 
