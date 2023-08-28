@@ -763,7 +763,14 @@ cat.sound = '야옹';
 - 시간, 날짜 및 사용자 정의 형식은 자동으로 변환할 수 없다. 따라서 이러한 타입은 추가적으로 처리해야 한다.
 - 참고 자료: [자바스크립트 문자열을 JSON으로 변환 (JSON.parse)](https://sisiblog.tistory.com/398)
 ## 📌 디버깅
+### 1. 버그 문제를 어떻게 해결하는가?
+### 2. 본인만의 디버깅 방식은?
+### 3. calling stack이란?
+### 4. 네트워크 오류 상황에 어떻게 확인하는가?
 ## 📌 기타
+### 1. generator란?
+### 2. ES Next 관심있는 문법이 있는가?
+### 3. 정규표현식은 언제 써봤는가?
 
 ## 🔗 References
 - [자바스크립트 면접 단골 질문](https://www.youtube.com/watch?v=zrzZXhDiiLs&t=321s)
