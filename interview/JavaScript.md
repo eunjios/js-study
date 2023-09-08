@@ -939,7 +939,7 @@ async()
 
     async(0)                            // 0
         .then(n => async(n + 1))        // 1
-        .then(n => async(n + 10));      // 11
+        .then(n => async(n + 10))       // 11
         .catch(error => {
             console.log(error);
         });
